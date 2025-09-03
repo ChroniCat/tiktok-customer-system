@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript">
+      // GitHub Pages SPA路由处理
+      // 当用户直接访问 /admin 等路径时，GitHub Pages会返回404
+      // 这个脚本将URL路径存储到sessionStorage，然后重定向到首页
+      (function(l) {
+        if (l.search[1] === '/' ) {
+          var decoded = sessionStorage.redirect || l.search.slice(1);
+          if (decoded) {
+            sessionStorage.redirect = decoded;
+          }
+        }
+      }(window.location))
+      
+      // 立即重定向到首页，让客户端路由接管
+      window.location.replace(window.location.origin + '/?p=' + 
+        window.location.pathname.slice(1) + 
+        (window.location.search ? '&' + window.location.search.slice(1) : '') +
+        window.location.hash
+      );
+    </script>
+  </head>
+  <body>
+    <!-- GitHub Pages 404 重定向页面 -->
+    <!-- 此页面将自动重定向到主页，由客户端路由处理 -->
+  </body>
+</html>

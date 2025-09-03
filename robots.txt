@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# 禁止搜索引擎索引管理后台
+Disallow: /admin
+
+# Sitemap
+Sitemap: https://your-username.github.io/tiktok-customer-system/sitemap.xml

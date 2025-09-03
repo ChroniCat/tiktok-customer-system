@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- SEO & 社交媒体优化 -->
+  <title>TikTok直播间客户信息收集系统 | 专业双语表单</title>
+  <meta name="description" content="专为TikTok直播间设计的客户信息收集系统，支持英语法语双语，移动端优化，适合非洲用户群体使用。" />
+  <meta name="keywords" content="TikTok,直播,客户信息,表单,双语,非洲,移动端" />
+  <meta name="author" content="TikTok Customer System" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="TikTok直播间客户信息收集系统" />
+  <meta property="og:description" content="专业双语客户信息收集系统，为TikTok直播间量身定制" />
+  <meta property="og:image" content="/favicon-192x192.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TikTok直播间客户信息收集系统" />
+  <meta name="twitter:description" content="专业双语客户信息收集系统，为TikTok直播间量身定制" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  
+  <!-- 图标 -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png" />
+  
+  <!-- 预连接优化 - Google Fonts 和其他CDN -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- 安全头 -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+  
+  <!-- GitHub Pages SPA路由处理 -->
+  <script type="text/javascript">
+    // 处理GitHub Pages的SPA路由问题
+    (function(l) {
+      if (l.search[1] === '/') {
+        var decoded = sessionStorage.redirect || l.search.slice(1);
+        if (decoded) {
+          sessionStorage.redirect = decoded;
+          history.replaceState(null, null, l.pathname.slice(0, -1) + decoded);
+        }
+      }
+    }(window.location));
+  </script>
+  
+  <!-- Service Worker注册 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+          .then(function(registration) {
+            console.log('SW registered: ', registration);
+          })
+          .catch(function(registrationError) {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
+  
+  <!-- 样式和脚本 -->
+  <link rel="stylesheet" crossorigin href="/assets/index-CLrEAVvh.css">
+  <script type="module" crossorigin src="/assets/index-BAd5UGWB.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+  
+  <!-- 加载指示器 -->
+  <style>
+    #root:empty::before {
+      content: 'Loading...';
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #2563eb;
+      font-size: 18px;
+      font-family: Inter, sans-serif;
+    }
+  </style>
+</body>
+</html>
