@@ -390,8 +390,8 @@
         </div>
     </div>
 
-    <!-- 本地QR码生成器 -->
-    <script src="local-qrcode.js"></script>
+    <!-- QR码生成器 -->
+    <script src="qrcode.min.js"></script>
 
     <script>
         let currentQRCanvas = null;
@@ -545,7 +545,7 @@
             }
         }
 
-        // 本地QR Code生成功能
+        // QR Code生成功能
         function generateQRCode() {
             const urlInput = document.getElementById('qr-url');
             let url;
@@ -565,26 +565,31 @@
             container.innerHTML = '<div style="padding: 20px; color: #666; text-align: center;">正在生成二维码...</div>';
 
             try {
-                // 使用本地QR码生成器
-                const qrGenerator = new LocalQRCode();
-                const modules = qrGenerator.generate(url);
-                
-                // 创建 canvas 元素
-                const canvas = document.createElement('canvas');
-                const cellSize = 14; // 每个模块的像素大小
-                
-                // 渲染QR码
-                qrGenerator.renderToCanvas(canvas, modules, cellSize);
-                
-                // 清空容器并添加canvas
+                // 清空容器
                 container.innerHTML = '';
-                container.appendChild(canvas);
-                currentQRCanvas = canvas;
                 
-                // 添加样式
-                canvas.style.border = '1px solid #e5e7eb';
-                canvas.style.borderRadius = '10px';
-                canvas.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                // 创建QR码容器div
+                const qrDiv = document.createElement('div');
+                qrDiv.style.cssText = 'display: inline-block; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px; background: white;';
+                container.appendChild(qrDiv);
+                
+                // 使用QR码库生成
+                const qrCodeGen = new QRCode(qrDiv, {
+                    text: url,
+                    width: 256,
+                    height: 256,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+                
+                // 保存canvas引用以便下载
+                setTimeout(() => {
+                    const canvas = qrDiv.querySelector('canvas');
+                    if (canvas) {
+                        currentQRCanvas = canvas;
+                    }
+                }, 100);
                 
                 // 显示成功信息
                 const successMsg = document.createElement('div');
@@ -597,10 +602,9 @@
                 `;
                 container.appendChild(successMsg);
                 
-                console.log('本地QR码生成成功:', url);
-                
+                console.log('QR码生成成功:', url);
             } catch (error) {
-                console.error('本地QR码生成错误:', error);
+                console.error('QR码生成错误:', error);
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #dc2626; border: 2px dashed #dc2626; border-radius: 8px;">
                         <h4 style="margin-bottom: 15px;">⚠️ QR码生成失败</h4>
