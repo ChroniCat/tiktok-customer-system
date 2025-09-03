@@ -5,4 +5,4 @@ Allow: /
 Disallow: /admin
 
 # Sitemap
-Sitemap: https://your-username.github.io/tiktok-customer-system/sitemap.xml
+Sitemap: https://ChroniCat.github.io/tiktok-customer-system/sitemap.xml
