@@ -185,25 +185,6 @@ body {
     background: #4b5563;
 }
 
-/* 管理员链接 */
-.admin-link {
-    text-align: center;
-    margin-top: 30px;
-}
-
-.admin-link a {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    font-size: 0.9rem;
-    border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
-}
-
-.admin-link a:hover {
-    color: white;
-    border-bottom-style: solid;
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {

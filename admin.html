@@ -548,55 +548,159 @@
         // QR Code Functions
         function generateQRCode() {
             const urlInput = document.getElementById('qr-url');
-            const url = urlInput.value || window.location.origin + window.location.pathname.replace('admin.html', 'index.html');
+            let url;
+            
+            if (urlInput.value.trim()) {
+                url = urlInput.value.trim();
+            } else {
+                // 构建默认的表单URL
+                const currentPath = window.location.pathname;
+                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                url = window.location.origin + basePath + '/index.html';
+            }
+            
             currentURL = url;
 
             const container = document.getElementById('qr-code-container');
-            container.innerHTML = '';
+            container.innerHTML = '<div style="padding: 20px; color: #666;">正在生成二维码...</div>';
 
-            QRCode.toCanvas(url, {
-                width: 300,
-                height: 300,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            }, function (error, canvas) {
-                if (error) {
-                    console.error(error);
-                    container.innerHTML = '<p>Error generating QR code</p>';
-                } else {
-                    container.appendChild(canvas);
-                    currentQRCanvas = canvas;
-                }
-            });
+            // 检查QRCode库是否已加载
+            if (typeof QRCode === 'undefined') {
+                container.innerHTML = '<div style="color: red; padding: 20px;">错误：QR码库未加载。请检查网络连接并刷新页面。</div>';
+                return;
+            }
+
+            try {
+                QRCode.toCanvas(url, {
+                    width: 300,
+                    height: 300,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    },
+                    errorCorrectionLevel: 'M'
+                }, function (error, canvas) {
+                    if (error) {
+                        console.error('QR码生成错误:', error);
+                        container.innerHTML = '<div style="color: red; padding: 20px;">生成QR码时出错：' + error.message + '</div>';
+                    } else {
+                        container.innerHTML = '';
+                        container.appendChild(canvas);
+                        currentQRCanvas = canvas;
+                        
+                        // 显示成功信息
+                        const successMsg = document.createElement('div');
+                        successMsg.style.cssText = 'color: #10b981; margin-top: 10px; font-size: 14px;';
+                        successMsg.textContent = 'QR码生成成功！扫描此码可访问：' + url;
+                        container.appendChild(successMsg);
+                    }
+                });
+            } catch (e) {
+                console.error('QR码生成异常:', e);
+                container.innerHTML = '<div style="color: red; padding: 20px;">生成QR码时发生异常：' + e.message + '</div>';
+            }
         }
 
         function copyURL() {
-            const url = currentURL || document.getElementById('qr-url').value;
-            navigator.clipboard.writeText(url).then(function() {
-                // 简单的反馈
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 1000);
-            }).catch(function() {
-                alert('Failed to copy URL');
-            });
+            const url = currentURL || document.getElementById('qr-url').value || (function() {
+                const currentPath = window.location.pathname;
+                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                return window.location.origin + basePath + '/index.html';
+            })();
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(function() {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '已复制！';
+                    btn.style.background = '#10b981';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#6b7280';
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('复制失败:', err);
+                    fallbackCopy(url);
+                });
+            } else {
+                fallbackCopy(url);
+            }
+        }
+        
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.textContent = '已复制！';
+                    btn.style.background = '#10b981';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '#6b7280';
+                    }, 2000);
+                } else {
+                    alert('复制失败，请手动复制：' + text);
+                }
+            } catch (err) {
+                console.error('复制错误:', err);
+                alert('复制失败，请手动复制：' + text);
+            }
+            
+            document.body.removeChild(textarea);
         }
 
         function downloadQR() {
             if (!currentQRCanvas) {
-                alert('Please generate a QR code first');
+                // 尝试首先生成QR码
+                generateQRCode();
+                setTimeout(() => {
+                    if (currentQRCanvas) {
+                        downloadQRCanvas();
+                    } else {
+                        alert('请先生成QR码，然后再下载');
+                    }
+                }, 1000);
                 return;
             }
-
-            const link = document.createElement('a');
-            link.download = 'tiktok-customer-qrcode.png';
-            link.href = currentQRCanvas.toDataURL();
-            link.click();
+            
+            downloadQRCanvas();
+        }
+        
+        function downloadQRCanvas() {
+            try {
+                const link = document.createElement('a');
+                link.download = 'tiktok-customer-qrcode-' + new Date().getTime() + '.png';
+                link.href = currentQRCanvas.toDataURL('image/png');
+                
+                // 添加到文档并点击
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // 提供用户反馈
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '下载成功！';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#10b981';
+                }, 2000);
+                
+            } catch (err) {
+                console.error('下载错误:', err);
+                alert('下载QR码失败，请右键点击QR码图片手动保存');
+            }
         }
     </script>
 </body>
