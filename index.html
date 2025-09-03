@@ -1,94 +1,145 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- SEO & 社交媒体优化 -->
-  <title>TikTok直播间客户信息收集系统 | 专业双语表单</title>
-  <meta name="description" content="专为TikTok直播间设计的客户信息收集系统，支持英语法语双语，移动端优化，适合非洲用户群体使用。" />
-  <meta name="keywords" content="TikTok,直播,客户信息,表单,双语,非洲,移动端" />
-  <meta name="author" content="TikTok Customer System" />
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="TikTok直播间客户信息收集系统" />
-  <meta property="og:description" content="专业双语客户信息收集系统，为TikTok直播间量身定制" />
-  <meta property="og:image" content="/favicon-192x192.png" />
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TikTok直播间客户信息收集系统" />
-  <meta name="twitter:description" content="专业双语客户信息收集系统，为TikTok直播间量身定制" />
-  
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="/manifest.json" />
-  <meta name="theme-color" content="#2563eb" />
-  
-  <!-- 图标 -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png" />
-  
-  <!-- 预连接优化 - Google Fonts 和其他CDN -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  
-  <!-- 安全头 -->
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="X-Frame-Options" content="DENY" />
-  <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
-  
-  <!-- GitHub Pages SPA路由处理 -->
-  <script type="text/javascript">
-    // 处理GitHub Pages的SPA路由问题
-    (function(l) {
-      if (l.search[1] === '/') {
-        var decoded = sessionStorage.redirect || l.search.slice(1);
-        if (decoded) {
-          sessionStorage.redirect = decoded;
-          history.replaceState(null, null, l.pathname.slice(0, -1) + decoded);
-        }
-      }
-    }(window.location));
-  </script>
-  
-  <!-- Service Worker注册 -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-          .then(function(registration) {
-            console.log('SW registered: ', registration);
-          })
-          .catch(function(registrationError) {
-            console.log('SW registration failed: ', registrationError);
-          });
-      });
-    }
-  </script>
-  
-  <!-- 样式和脚本 -->
-  <link rel="stylesheet" crossorigin href="/assets/index-CLrEAVvh.css">
-  <script type="module" crossorigin src="/assets/index-BAd5UGWB.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Information Form | TikTok Live</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
 </head>
-
 <body>
-  <div id="root"></div>
-  
-  <!-- 加载指示器 -->
-  <style>
-    #root:empty::before {
-      content: 'Loading...';
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #2563eb;
-      font-size: 18px;
-      font-family: Inter, sans-serif;
-    }
-  </style>
+    <div id="app">
+        <!-- 语言切换器 -->
+        <div class="language-switcher">
+            <button id="lang-en" class="lang-btn active" data-lang="en">English</button>
+            <button id="lang-fr" class="lang-btn" data-lang="fr">Français</button>
+        </div>
+
+        <!-- 主标题 -->
+        <header class="header">
+            <h1 id="main-title">Customer Information Form</h1>
+            <p id="main-subtitle">Please fill in your information to receive exclusive offers</p>
+        </header>
+
+        <!-- 表单容器 -->
+        <div class="form-container">
+            <form id="customerForm" class="customer-form">
+                <div class="form-group">
+                    <label for="name" id="label-name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" id="label-email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" id="label-phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="country" id="label-country">Country</label>
+                    <select id="country" name="country" required>
+                        <option value="" id="option-select-country">Select your country</option>
+                        <option value="DZ">Algeria</option>
+                        <option value="AO">Angola</option>
+                        <option value="BJ">Benin</option>
+                        <option value="BW">Botswana</option>
+                        <option value="BF">Burkina Faso</option>
+                        <option value="BI">Burundi</option>
+                        <option value="CV">Cape Verde</option>
+                        <option value="CM">Cameroon</option>
+                        <option value="CF">Central African Republic</option>
+                        <option value="TD">Chad</option>
+                        <option value="KM">Comoros</option>
+                        <option value="CG">Congo</option>
+                        <option value="CD">Democratic Republic of Congo</option>
+                        <option value="CI">Côte d'Ivoire</option>
+                        <option value="DJ">Djibouti</option>
+                        <option value="EG">Egypt</option>
+                        <option value="GQ">Equatorial Guinea</option>
+                        <option value="ER">Eritrea</option>
+                        <option value="SZ">Eswatini</option>
+                        <option value="ET">Ethiopia</option>
+                        <option value="GA">Gabon</option>
+                        <option value="GM">Gambia</option>
+                        <option value="GH">Ghana</option>
+                        <option value="GN">Guinea</option>
+                        <option value="GW">Guinea-Bissau</option>
+                        <option value="KE">Kenya</option>
+                        <option value="LS">Lesotho</option>
+                        <option value="LR">Liberia</option>
+                        <option value="LY">Libya</option>
+                        <option value="MG">Madagascar</option>
+                        <option value="MW">Malawi</option>
+                        <option value="ML">Mali</option>
+                        <option value="MR">Mauritania</option>
+                        <option value="MU">Mauritius</option>
+                        <option value="MA">Morocco</option>
+                        <option value="MZ">Mozambique</option>
+                        <option value="NA">Namibia</option>
+                        <option value="NE">Niger</option>
+                        <option value="NG">Nigeria</option>
+                        <option value="RW">Rwanda</option>
+                        <option value="ST">São Tomé and Príncipe</option>
+                        <option value="SN">Senegal</option>
+                        <option value="SC">Seychelles</option>
+                        <option value="SL">Sierra Leone</option>
+                        <option value="SO">Somalia</option>
+                        <option value="ZA">South Africa</option>
+                        <option value="SS">South Sudan</option>
+                        <option value="SD">Sudan</option>
+                        <option value="TZ">Tanzania</option>
+                        <option value="TG">Togo</option>
+                        <option value="TN">Tunisia</option>
+                        <option value="UG">Uganda</option>
+                        <option value="ZM">Zambia</option>
+                        <option value="ZW">Zimbabwe</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="city" id="label-city">City</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="interest" id="label-interest">Purchase Interest</label>
+                    <select id="interest" name="interest" required>
+                        <option value="" id="option-select-interest">Select your interest</option>
+                        <option value="electronics" id="option-electronics">Electronics</option>
+                        <option value="fashion" id="option-fashion">Fashion</option>
+                        <option value="beauty" id="option-beauty">Beauty & Cosmetics</option>
+                        <option value="home" id="option-home">Home & Garden</option>
+                        <option value="sports" id="option-sports">Sports & Fitness</option>
+                        <option value="books" id="option-books">Books & Education</option>
+                        <option value="other" id="option-other">Other</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submit-btn" class="submit-btn">Submit Information</button>
+            </form>
+        </div>
+
+        <!-- 成功消息 -->
+        <div id="success-message" class="success-message" style="display: none;">
+            <div class="success-content">
+                <div class="success-icon">✅</div>
+                <h2 id="success-title">Thank You!</h2>
+                <p id="success-text">Your information has been submitted successfully. Our customer service team will contact you soon with exclusive offers!</p>
+                <button id="submit-another" class="btn-secondary">Submit Another Form</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理员链接 -->
+    <div class="admin-link">
+        <a href="admin.html" id="admin-link-text">Customer Service Portal</a>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
