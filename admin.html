@@ -335,17 +335,19 @@
             </div>
         </div>
 
-        <!-- QR码生成器 -->
+        <!-- 客户表单二维码 -->
         <div class="qr-section">
-            <h3>QR Code Generator</h3>
-            <div class="qr-input-group">
-                <input type="url" id="qr-url" class="qr-input" placeholder="Enter URL (leave empty for form URL)" value="">
-                <button onclick="generateQRCode()" class="btn btn-primary">Generate QR Code</button>
+            <h3>客户表单二维码</h3>
+            <p style="color: #6b7280; margin-bottom: 20px;">扫描下方二维码即可访问客户信息填写表单</p>
+            <div id="qr-code-container">
+                <img src="qrcode-fixed.png" alt="客户表单二维码" style="width: 256px; height: 256px; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             </div>
-            <div id="qr-code-container"></div>
             <div class="btn-group" style="margin-top: 15px;">
-                <button onclick="copyURL()" class="btn btn-secondary">Copy URL</button>
-                <button onclick="downloadQR()" class="btn btn-success">Download PNG</button>
+                <button onclick="copyFormURL()" class="btn btn-secondary">复制表单链接</button>
+                <button onclick="downloadQRImage()" class="btn btn-success">下载二维码</button>
+            </div>
+            <div style="margin-top: 10px; padding: 8px; background: #f9fafb; border-radius: 5px; font-size: 12px; color: #6b7280; text-align: center;">
+                表单链接：https://chronicat.github.io/tiktok-customer-system/index.html
             </div>
         </div>
 
@@ -390,18 +392,11 @@
         </div>
     </div>
 
-    <!-- QR码生成器 -->
-    <script src="qrcode.min.js"></script>
-
     <script>
-        let currentQRCanvas = null;
-        let currentURL = '';
-
         // 初始化页面
         document.addEventListener('DOMContentLoaded', function() {
             loadCustomerData();
             setupEventListeners();
-            generateQRCode(); // 自动生成表单QR码
         });
 
         function setupEventListeners() {
@@ -545,87 +540,9 @@
             }
         }
 
-        // QR Code生成功能
-        function generateQRCode() {
-            const urlInput = document.getElementById('qr-url');
-            let url;
-            
-            if (urlInput.value.trim()) {
-                url = urlInput.value.trim();
-            } else {
-                // 构建默认的表单URL
-                const currentPath = window.location.pathname;
-                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-                url = window.location.origin + basePath + '/index.html';
-            }
-            
-            currentURL = url;
-
-            const container = document.getElementById('qr-code-container');
-            container.innerHTML = '<div style="padding: 20px; color: #666; text-align: center;">正在生成二维码...</div>';
-
-            try {
-                // 清空容器
-                container.innerHTML = '';
-                
-                // 创建QR码容器div
-                const qrDiv = document.createElement('div');
-                qrDiv.style.cssText = 'display: inline-block; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 10px; background: white;';
-                container.appendChild(qrDiv);
-                
-                // 使用QR码库生成
-                const qrCodeGen = new QRCode(qrDiv, {
-                    text: url,
-                    width: 256,
-                    height: 256,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-                
-                // 保存canvas引用以便下载
-                setTimeout(() => {
-                    const canvas = qrDiv.querySelector('canvas');
-                    if (canvas) {
-                        currentQRCanvas = canvas;
-                    }
-                }, 100);
-                
-                // 显示成功信息
-                const successMsg = document.createElement('div');
-                successMsg.style.cssText = 'color: #10b981; margin-top: 15px; font-size: 14px; text-align: center;';
-                successMsg.innerHTML = `
-                    <div style="margin-bottom: 8px;">🎉 QR码生成成功！</div>
-                    <div style="font-size: 12px; color: #6b7280; word-break: break-all; padding: 8px; background: #f9fafb; border-radius: 5px;">
-                        扫描此码可访问：<br>${url}
-                    </div>
-                `;
-                container.appendChild(successMsg);
-                
-                console.log('QR码生成成功:', url);
-            } catch (error) {
-                console.error('QR码生成错误:', error);
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #dc2626; border: 2px dashed #dc2626; border-radius: 8px;">
-                        <h4 style="margin-bottom: 15px;">⚠️ QR码生成失败</h4>
-                        <p style="margin-bottom: 20px;">生成QR码时发生错误：${error.message}</p>
-                        <div style="background: #f3f4f6; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                            <strong>手动分享URL：</strong><br>
-                            <input type="text" value="${url}" readonly style="width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px;" onclick="this.select()">
-                        </div>
-                        <p style="font-size: 12px; color: #666;">点击上方URL可复制分享</p>
-                        <button onclick="generateQRCode()" style="margin-top: 15px; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 5px; cursor: pointer;">重试生成</button>
-                    </div>
-                `;
-            }
-        }
-
-        function copyURL() {
-            const url = currentURL || document.getElementById('qr-url').value || (function() {
-                const currentPath = window.location.pathname;
-                const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-                return window.location.origin + basePath + '/index.html';
-            })();
+        // 复制表单链接
+        function copyFormURL() {
+            const url = 'https://chronicat.github.io/tiktok-customer-system/index.html';
             
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(url).then(function() {
@@ -677,48 +594,26 @@
             document.body.removeChild(textarea);
         }
 
-        function downloadQR() {
-            if (!currentQRCanvas) {
-                // 尝试首先生成QR码
-                generateQRCode();
-                setTimeout(() => {
-                    if (currentQRCanvas) {
-                        downloadQRCanvas();
-                    } else {
-                        alert('请先生成QR码，然后再下载');
-                    }
-                }, 1000);
-                return;
-            }
+        // 下载二维码图片
+        function downloadQRImage() {
+            const link = document.createElement('a');
+            link.download = 'tiktok-customer-form-qrcode.png';
+            link.href = 'qrcode-fixed.png';
             
-            downloadQRCanvas();
-        }
-        
-        function downloadQRCanvas() {
-            try {
-                const link = document.createElement('a');
-                link.download = 'tiktok-customer-qrcode-' + new Date().getTime() + '.png';
-                link.href = currentQRCanvas.toDataURL('image/png');
-                
-                // 添加到文档并点击
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // 提供用户反馈
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '下载成功！';
+            // 添加到文档并点击
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 提供用户反馈
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '下载成功！';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.textContent = originalText;
                 btn.style.background = '#10b981';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#10b981';
-                }, 2000);
-                
-            } catch (err) {
-                console.error('下载错误:', err);
-                alert('下载QR码失败，请右键点击QR码图片手动保存');
-            }
+            }, 2000);
         }
     </script>
 </body>
