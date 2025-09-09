@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改Admin密码工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .step {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2563eb;
+        }
+
+        .step h3 {
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .result {
+            background: #f0f9ff;
+            border: 1px solid #2563eb;
+            color: #1e40af;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            word-break: break-all;
+        }
+
+        .warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .code {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 修改Admin密码工具</h1>
+        
+        <div class="warning">
+            <strong>⚠️ 安全提醒：</strong>
+            <br>1. 请选择强密码（建议包含大小写字母、数字、特殊字符）
+            <br>2. 不要在公共场所使用此工具
+            <br>3. 修改完成后请删除此HTML文件
+        </div>
+
+        <div class="step">
+            <h3>步骤1：输入新密码</h3>
+            <div class="form-group">
+                <label for="new-password">新管理员密码：</label>
+                <input type="password" id="new-password" placeholder="输入新的管理员密码">
+            </div>
+            <button class="btn" onclick="generateHash()">生成密码哈希</button>
+        </div>
+
+        <div class="step" id="hash-result" style="display: none;">
+            <h3>步骤2：复制生成的哈希值</h3>
+            <div class="result">
+                <strong>生成的SHA-256哈希值：</strong>
+                <div class="code" id="hash-output"></div>
+                <button class="copy-btn" onclick="copyHash()">复制哈希值</button>
+            </div>
+        </div>
+
+        <div class="step" id="instructions" style="display: none;">
+            <h3>步骤3：修改admin.html文件</h3>
+            <p>在admin.html文件中找到第600行左右的代码：</p>
+            <div class="code">const correctHash = 'f7d5a7e8c9b6d4f3e2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8';</div>
+            <p>将其替换为：</p>
+            <div class="code" id="replacement-code"></div>
+            <button class="copy-btn" onclick="copyReplacementCode()">复制替换代码</button>
+            
+            <p style="margin-top: 15px;"><strong>具体操作：</strong></p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>打开 <code>admin.html</code> 文件</li>
+                <li>找到第600行左右包含 <code>correctHash</code> 的行</li>
+                <li>将旧的哈希值替换为上面生成的新哈希值</li>
+                <li>保存文件并重新部署到GitHub</li>
+                <li>测试新密码是否生效</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let generatedHash = '';
+
+        // 密码哈希函数（与admin.html中的函数相同）
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // 生成密码哈希
+        async function generateHash() {
+            const password = document.getElementById('new-password').value;
+            
+            if (!password) {
+                alert('请输入新密码！');
+                return;
+            }
+
+            if (password.length < 8) {
+                alert('密码长度至少需要8位字符！');
+                return;
+            }
+
+            try {
+                generatedHash = await hashPassword(password);
+                document.getElementById('hash-output').textContent = generatedHash;
+                document.getElementById('replacement-code').textContent = `const correctHash = '${generatedHash}';`;
+                
+                document.getElementById('hash-result').style.display = 'block';
+                document.getElementById('instructions').style.display = 'block';
+                
+                // 滚动到结果区域
+                document.getElementById('hash-result').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('生成哈希失败：' + error.message);
+            }
+        }
+
+        // 复制哈希值
+        function copyHash() {
+            navigator.clipboard.writeText(generatedHash).then(() => {
+                alert('哈希值已复制到剪贴板！');
+            }).catch(() => {
+                // 降级处理
+                const textArea = document.createElement('textarea');
+                textArea.value = generatedHash;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('哈希值已复制到剪贴板！');
+            });
+        }
+
+        // 复制替换代码
+        function copyReplacementCode() {
+            const replacementCode = `const correctHash = '${generatedHash}';`;
+            navigator.clipboard.writeText(replacementCode).then(() => {
+                alert('替换代码已复制到剪贴板！');
+            }).catch(() => {
+                // 降级处理
+                const textArea = document.createElement('textarea');
+                textArea.value = replacementCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('替换代码已复制到剪贴板！');
+            });
+        }
+
+        // 回车键触发生成
+        document.getElementById('new-password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateHash();
+            }
+        });
+    </script>
+</body>
+</html>
