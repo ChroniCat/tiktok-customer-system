@@ -1,4 +1,6 @@
-/* TikTok Customer System Styles */
+/* TikTok Customer System - 共享样式文件 */
+/* 确保与安全功能兼容的样式 */
+
 * {
     margin: 0;
     padding: 0;
@@ -9,261 +11,244 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
     color: #333;
+    line-height: 1.6;
 }
 
-#app {
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-}
-
-/* 语言切换器 */
-.language-switcher {
+/* 登录界面样式 */
+.login-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.lang-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.lang-btn.active,
-.lang-btn:hover {
-    background: white;
-    color: #2563eb;
-    border-color: white;
-}
-
-/* 标题区域 */
-.header {
-    text-align: center;
-    margin-bottom: 40px;
-    color: white;
-}
-
-.header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    font-weight: 700;
-}
-
-.header p {
-    font-size: 1.2rem;
-    opacity: 0.9;
-}
-
-/* 表单容器 */
-.form-container {
+.login-form {
     background: white;
     padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
 }
 
-.customer-form {
-    width: 100%;
+.login-form h2 {
+    margin-bottom: 30px;
+    color: #2563eb;
+    font-size: 2rem;
 }
 
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
+    margin-bottom: 5px;
     color: #374151;
-    font-size: 1rem;
+    font-weight: 500;
 }
 
-.form-group input,
-.form-group select {
+.form-group input {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: 2px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
-    background-color: #f9fafb;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.form-group input:focus {
     outline: none;
     border-color: #2563eb;
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.submit-btn {
-    width: 100%;
-    background: #2563eb;
-    color: white;
-    padding: 18px;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
+/* 错误提示样式 */
+.error {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 5px;
 }
 
-.submit-btn:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+.form-group.has-error input {
+    border-color: #dc2626;
 }
 
-.submit-btn:active {
-    transform: translateY(0);
-}
-
-/* 成功消息 */
-.success-message {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.success-content {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-}
-
-.success-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-}
-
-.success-content h2 {
-    color: #059669;
-    margin-bottom: 15px;
-    font-size: 2rem;
-}
-
-.success-content p {
-    color: #6b7280;
-    margin-bottom: 25px;
-    line-height: 1.6;
-}
-
-.btn-secondary {
-    background: #6b7280;
-    color: white;
+/* 按钮样式 */
+.btn {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
 }
 
 .btn-secondary:hover {
     background: #4b5563;
 }
 
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+}
+
+.btn-warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #d97706;
+}
+
+/* 安全警告样式 */
+.security-warning {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    color: #92400e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.security-info {
+    background: #dbeafe;
+    border: 1px solid #2563eb;
+    color: #1e40af;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* 会话状态样式 */
+.session-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 15px;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 0.875rem;
+    z-index: 1000;
+}
+
+.session-status.warning {
+    background: rgba(251, 191, 36, 0.95);
+    color: #92400e;
+}
+
+/* 进度条样式 */
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progress-fill.warning {
+    background: #f59e0b;
+}
+
+.progress-fill.danger {
+    background: #dc2626;
+}
+
+/* 倒计时样式 */
+.countdown {
+    font-weight: bold;
+    color: #dc2626;
+    font-size: 1.1rem;
+}
+
+/* 蜜罐字段隐藏 */
+.honeypot {
+    position: absolute !important;
+    left: -9999px !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    tabindex: -1 !important;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-    
-    .header h1 {
-        font-size: 2rem;
-    }
-    
-    .header p {
-        font-size: 1rem;
-    }
-    
-    .form-container {
+    .login-form {
         padding: 30px 20px;
+        margin: 10px;
     }
     
-    .lang-btn {
-        padding: 8px 16px;
-        font-size: 0.9rem;
+    .session-status {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 10px 0;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
     }
 }
 
-@media (max-width: 480px) {
-    .form-container {
-        padding: 20px 15px;
-    }
-    
-    .success-content {
-        padding: 30px 20px;
-    }
-    
-    .header h1 {
-        font-size: 1.8rem;
-    }
-    
-    .language-switcher {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .lang-btn {
-        width: 120px;
-    }
+/* 动画效果 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
-/* 加载状态 */
+.error-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
 .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 200px;
+    animation: pulse 1.5s infinite;
 }
 
-.loading::after {
-    content: '';
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #2563eb;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 错误状态 */
-.error {
-    color: #dc2626;
-    font-size: 0.9rem;
-    margin-top: 5px;
-}
-
-.form-group.has-error input,
-.form-group.has-error select {
-    border-color: #dc2626;
-    background-color: #fef2f2;
-}
+/* 导入原有样式（如果存在）*/
+/* 这里可以添加现有 styles.css 的内容 */

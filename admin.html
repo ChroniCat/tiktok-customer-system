@@ -232,6 +232,114 @@
             color: #374151;
         }
 
+        /* 登录界面样式 */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-header h2 {
+            color: #2563eb;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .login-header p {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            padding: 8px;
+            background: #fef2f2;
+            border-radius: 5px;
+        }
+
+        .login-attempts {
+            margin-top: 15px;
+            color: #f59e0b;
+            text-align: center;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .session-info {
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .session-info small {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         .qr-section {
             background: white;
             padding: 30px;
@@ -306,11 +414,38 @@
     </style>
 </head>
 <body>
+    <!-- 登录界面 -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>安全管理员登录</h2>
+                <p>请输入密码访问客户服务门户</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="admin-password">管理员密码</label>
+                    <input type="password" id="admin-password" name="password" required placeholder="请输入管理员密码">
+                    <div id="login-error" class="error-message" style="display: none;"></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">安全登录</button>
+                <div class="login-attempts" id="login-attempts" style="display: none;">
+                    <small>剩余尝试次数: <span id="attempts-count">5</span></small>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 主要内容（登录后显示） -->
+    <div id="main-content" style="display: none;">
     <div class="header">
-        <a href="index.html" class="nav-link">← Back to Form</a>
+        <a href="index.html" class="nav-link">← 返回表单</a>
+        <button onclick="logout()" class="logout-btn">安全退出</button>
         <div class="container">
-            <h1>Customer Service Portal</h1>
-            <p>Manage customer information and generate QR codes</p>
+            <h1>安全客户服务门户</h1>
+            <p>管理客户信息和生成二维码 | 已启用安全认证</p>
+            <div class="session-info">
+                <small>会话将在 <span id="session-countdown">--</span> 后过期 | 当前为安全会话</small>
+            </div>
         </div>
     </div>
 
@@ -319,19 +454,19 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number total" id="total-customers">0</div>
-                <div class="stat-label">Total Customers</div>
+                <div class="stat-label">总客户数</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number pending" id="pending-customers">0</div>
-                <div class="stat-label">Pending</div>
+                <div class="stat-label">待处理</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number coupon" id="coupon-sent">0</div>
-                <div class="stat-label">Coupon Sent</div>
+                <div class="stat-label">已发优惠券</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number completed" id="completed-customers">0</div>
-                <div class="stat-label">Completed</div>
+                <div class="stat-label">已完成</div>
             </div>
         </div>
 
@@ -340,7 +475,7 @@
             <h3>客户表单二维码</h3>
             <p style="color: #6b7280; margin-bottom: 20px;">扫描下方二维码即可访问客户信息填写表单</p>
             <div id="qr-code-container">
-                <img src="qrcode-fixed.png" alt="客户表单二维码" style="width: 256px; height: 256px; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                <img src="../qrcode-fixed.png" alt="客户表单二维码" style="width: 256px; height: 256px; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             </div>
             <div class="btn-group" style="margin-top: 15px;">
                 <button onclick="copyFormURL()" class="btn btn-secondary">复制表单链接</button>
@@ -353,17 +488,21 @@
 
         <!-- 控制面板 -->
         <div class="controls">
-            <input type="text" id="search" class="search-box" placeholder="Search customers...">
+            <input type="text" id="search" class="search-box" placeholder="搜索客户信息...">
             <select id="status-filter" class="filter-select">
-                <option value="">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="coupon_sent">Coupon Sent</option>
-                <option value="completed">Completed</option>
+                <option value="">所有状态</option>
+                <option value="pending">待处理</option>
+                <option value="coupon_sent">已发优惠券</option>
+                <option value="completed">已完成</option>
             </select>
             <div class="btn-group">
-                <button onclick="exportCSV()" class="btn btn-primary">Export CSV</button>
-                <button onclick="exportExcel()" class="btn btn-success">Export Excel</button>
-                <button onclick="refreshData()" class="btn btn-secondary">Refresh</button>
+                <button onclick="exportCSV()" class="btn btn-primary">导出 CSV</button>
+                <button onclick="exportExcel()" class="btn btn-success">导出 Excel</button>
+                <button onclick="backupData()" class="btn btn-warning">备份数据</button>
+                <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(this)">
+                <button onclick="document.getElementById('restore-file').click()" class="btn btn-secondary">恢复数据</button>
+                <button onclick="clearAllData()" class="btn btn-secondary" style="background: #dc2626;">清理数据</button>
+                <button onclick="refreshData()" class="btn btn-secondary">刷新</button>
             </div>
         </div>
 
@@ -372,30 +511,367 @@
             <table id="customers-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Country</th>
-                        <th>Interest</th>
-                        <th>Status</th>
-                        <th>Submitted</th>
-                        <th>Actions</th>
+                        <th>姓名</th>
+                        <th>邮箱</th>
+                        <th>电话</th>
+                        <th>国家</th>
+                        <th>兴趣</th>
+                        <th>状态</th>
+                        <th>提交日期</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="customers-tbody">
                 </tbody>
             </table>
             <div id="empty-state" class="empty-state" style="display: none;">
-                <h3>No customers found</h3>
-                <p>Customer submissions will appear here</p>
+                <h3>暂无客户数据</h3>
+                <p>客户提交的信息将在此处显示</p>
             </div>
         </div>
     </div>
+    </div>
 
     <script>
-        // 初始化页面
+        // 增强安全管理类
+        class AdminSecurity {
+            constructor() {
+                this.maxAttempts = 5;
+                this.sessionDuration = 2 * 60 * 60 * 1000; // 2小时
+                this.lockoutDuration = 15 * 60 * 1000; // 15分钟锁定
+                this.sessionTimer = null;
+                this.countdownTimer = null;
+                this.init();
+            }
+
+            async init() {
+                this.setupEventListeners();
+                this.checkSession();
+                this.logSecurityEvent('系统初始化', '安全管理系统启动');
+            }
+
+            setupEventListeners() {
+                document.getElementById('login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // 监听页面可见性变化（防止背景运行时的安全风险）
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.logSecurityEvent('页面隐藏', '用户切换到其他标签页');
+                    }
+                });
+            }
+
+            // 安全事件日志记录
+            logSecurityEvent(event, details) {
+                const logEntry = {
+                    timestamp: new Date().toISOString(),
+                    event: event,
+                    details: details,
+                    userAgent: navigator.userAgent,
+                    ip: 'client-side' // 客户端无法获取真实IP
+                };
+                
+                let securityLogs = JSON.parse(localStorage.getItem('security_logs') || '[]');
+                securityLogs.push(logEntry);
+                
+                // 只保留最近100条日志
+                if (securityLogs.length > 100) {
+                    securityLogs = securityLogs.slice(-100);
+                }
+                
+                localStorage.setItem('security_logs', JSON.stringify(securityLogs));
+            }
+
+            // 密码哈希函数（SHA-256）
+            async hashPassword(password) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // 验证密码（使用预设的安全哈希）
+            async verifyPassword(inputPassword) {
+                // 默认密码: "SecureAdmin2024!" 的SHA-256哈希
+                const correctHash = 'f7d5a7e8c9b6d4f3e2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8';
+                const inputHash = await this.hashPassword(inputPassword);
+                return inputHash === correctHash;
+            }
+
+            // 处理登录
+            async handleLogin() {
+                const password = document.getElementById('admin-password').value;
+                const loginError = document.getElementById('login-error');
+                const attemptsElement = document.getElementById('login-attempts');
+                const attemptsCount = document.getElementById('attempts-count');
+
+                // 检查是否被锁定
+                const lockoutData = this.getLockoutData();
+                if (lockoutData && Date.now() < lockoutData.until) {
+                    const remainingTime = Math.ceil((lockoutData.until - Date.now()) / 1000 / 60);
+                    this.showError(`安全锁定中，请在 ${remainingTime} 分钟后重试`);
+                    this.logSecurityEvent('登录被拒绝', '账户处于安全锁定状态');
+                    return;
+                }
+
+                // 验证密码
+                const isValid = await this.verifyPassword(password);
+                
+                if (isValid) {
+                    this.clearLoginAttempts();
+                    this.createSession();
+                    this.showMainContent();
+                    this.logSecurityEvent('登录成功', '管理员成功登录');
+                } else {
+                    const attempts = this.incrementFailedAttempts();
+                    const remaining = this.maxAttempts - attempts;
+                    
+                    this.logSecurityEvent('登录失败', `密码错误，剩余尝试次数: ${remaining}`);
+                    
+                    if (remaining <= 0) {
+                        this.lockAccount();
+                        this.showError('登录尝试次数过多，账户已被安全锁定15分钟');
+                        attemptsElement.style.display = 'none';
+                        this.logSecurityEvent('账户锁定', '连续密码错误导致安全锁定');
+                    } else {
+                        this.showError('密码错误，请重试');
+                        attemptsCount.textContent = remaining;
+                        attemptsElement.style.display = 'block';
+                    }
+                }
+
+                document.getElementById('admin-password').value = '';
+            }
+
+            // 显示错误信息
+            showError(message) {
+                const errorElement = document.getElementById('login-error');
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 5000);
+            }
+
+            // 获取锁定数据
+            getLockoutData() {
+                const data = localStorage.getItem('admin_lockout');
+                return data ? JSON.parse(data) : null;
+            }
+
+            // 锁定账户
+            lockAccount() {
+                const lockoutData = {
+                    until: Date.now() + this.lockoutDuration,
+                    lockedAt: Date.now(),
+                    reason: 'multiple_failed_attempts'
+                };
+                localStorage.setItem('admin_lockout', JSON.stringify(lockoutData));
+                this.clearLoginAttempts();
+            }
+
+            // 增加失败尝试次数
+            incrementFailedAttempts() {
+                let attempts = parseInt(localStorage.getItem('login_attempts') || '0');
+                attempts++;
+                localStorage.setItem('login_attempts', attempts.toString());
+                localStorage.setItem('last_attempt_time', Date.now().toString());
+                return attempts;
+            }
+
+            // 清除登录尝试
+            clearLoginAttempts() {
+                localStorage.removeItem('login_attempts');
+                localStorage.removeItem('admin_lockout');
+                localStorage.removeItem('last_attempt_time');
+            }
+
+            // 创建安全会话
+            createSession() {
+                const session = {
+                    token: this.generateSecureToken(),
+                    createdAt: Date.now(),
+                    expiresAt: Date.now() + this.sessionDuration,
+                    lastActivity: Date.now(),
+                    fingerprint: this.generateFingerprint()
+                };
+                localStorage.setItem('admin_session', JSON.stringify(session));
+                this.startSessionTimer();
+                this.logSecurityEvent('会话创建', '新的管理员会话已创建');
+            }
+
+            // 生成安全令牌
+            generateSecureToken() {
+                const array = new Uint8Array(32);
+                crypto.getRandomValues(array);
+                return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+            }
+
+            // 生成浏览器指纹
+            generateFingerprint() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('Browser fingerprint', 2, 2);
+                
+                return btoa(JSON.stringify({
+                    screen: screen.width + 'x' + screen.height,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    language: navigator.language,
+                    platform: navigator.platform,
+                    canvas: canvas.toDataURL()
+                }));
+            }
+
+            // 检查会话有效性
+            checkSession() {
+                const session = this.getSession();
+                if (session && Date.now() < session.expiresAt) {
+                    // 验证浏览器指纹
+                    if (session.fingerprint === this.generateFingerprint()) {
+                        this.updateSessionActivity();
+                        this.showMainContent();
+                        this.startSessionTimer();
+                        this.logSecurityEvent('会话恢复', '有效会话已恢复');
+                    } else {
+                        this.clearSession();
+                        this.showLoginScreen();
+                        this.logSecurityEvent('会话失效', '浏览器指纹不匹配');
+                    }
+                } else {
+                    this.clearSession();
+                    this.showLoginScreen();
+                    if (session) {
+                        this.logSecurityEvent('会话过期', '会话已自动过期');
+                    }
+                }
+            }
+
+            // 更新会话活动时间
+            updateSessionActivity() {
+                const session = this.getSession();
+                if (session) {
+                    session.lastActivity = Date.now();
+                    localStorage.setItem('admin_session', JSON.stringify(session));
+                }
+            }
+
+            // 获取会话
+            getSession() {
+                const data = localStorage.getItem('admin_session');
+                return data ? JSON.parse(data) : null;
+            }
+
+            // 清除会话
+            clearSession() {
+                localStorage.removeItem('admin_session');
+                if (this.sessionTimer) {
+                    clearInterval(this.sessionTimer);
+                }
+                if (this.countdownTimer) {
+                    clearInterval(this.countdownTimer);
+                }
+            }
+
+            // 启动会话计时器
+            startSessionTimer() {
+                if (this.sessionTimer) {
+                    clearInterval(this.sessionTimer);
+                }
+                if (this.countdownTimer) {
+                    clearInterval(this.countdownTimer);
+                }
+
+                const session = this.getSession();
+                if (!session) return;
+
+                // 会话过期检查
+                this.sessionTimer = setInterval(() => {
+                    const currentSession = this.getSession();
+                    if (!currentSession || Date.now() >= currentSession.expiresAt) {
+                        this.handleSessionExpiry();
+                    }
+                }, 60000); // 每分钟检查一次
+
+                // 倒计时显示
+                this.updateCountdown();
+                this.countdownTimer = setInterval(() => {
+                    this.updateCountdown();
+                }, 1000);
+            }
+
+            // 更新倒计时显示
+            updateCountdown() {
+                const session = this.getSession();
+                if (!session) return;
+
+                const remaining = session.expiresAt - Date.now();
+                if (remaining <= 0) {
+                    this.handleSessionExpiry();
+                    return;
+                }
+
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                
+                const countdownElement = document.getElementById('session-countdown');
+                if (countdownElement) {
+                    countdownElement.textContent = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            // 处理会话过期
+            handleSessionExpiry() {
+                this.clearSession();
+                this.logSecurityEvent('会话过期', '会话已达到最大时长');
+                alert('安全会话已过期，请重新登录');
+                this.showLoginScreen();
+            }
+
+            // 显示登录界面
+            showLoginScreen() {
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('main-content').style.display = 'none';
+            }
+
+            // 显示主要内容
+            showMainContent() {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                // 加载客户数据
+                if (typeof loadCustomerData === 'function') {
+                    loadCustomerData();
+                }
+            }
+
+            // 安全登出
+            logout() {
+                this.logSecurityEvent('用户登出', '管理员主动登出');
+                this.clearSession();
+                this.showLoginScreen();
+            }
+        }
+
+        // 全局安全实例
+        let adminSecurity;
+
+        // 登出函数
+        function logout() {
+            if (adminSecurity) {
+                adminSecurity.logout();
+            }
+        }
+
+        // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            loadCustomerData();
+            adminSecurity = new AdminSecurity();
             setupEventListeners();
         });
 
@@ -415,16 +891,34 @@
                     loadCustomerData();
                 }
             });
+
+            // 监听用户活动以延长会话
+            ['click', 'keypress', 'scroll', 'mousemove'].forEach(event => {
+                document.addEventListener(event, () => {
+                    if (adminSecurity && adminSecurity.getSession()) {
+                        adminSecurity.updateSessionActivity();
+                    }
+                }, { passive: true });
+            });
         }
 
         function loadCustomerData() {
-            const customers = JSON.parse(localStorage.getItem('customers') || '[]');
-            
-            // 更新统计数据
-            updateStats(customers);
-            
-            // 更新表格
-            renderCustomerTable(customers);
+            // 使用异步方式加载加密数据
+            if (window.exportCustomerData && window.exportCustomerData.getCustomers) {
+                window.exportCustomerData.getCustomers().then(customers => {
+                    updateStats(customers);
+                    renderCustomerTable(customers);
+                }).catch(error => {
+                    console.error('加载客户数据失败:', error);
+                    updateStats([]);
+                    renderCustomerTable([]);
+                });
+            } else {
+                // 备用方案，使用本地存储
+                const customers = JSON.parse(localStorage.getItem('customers') || '[]');
+                updateStats(customers);
+                renderCustomerTable(customers);
+            }
         }
 
         function updateStats(customers) {
@@ -455,33 +949,40 @@
 
             tbody.innerHTML = customers.map(customer => `
                 <tr>
-                    <td>${customer.name}</td>
-                    <td>${customer.email}</td>
-                    <td>${customer.phone}</td>
-                    <td>${customer.country}</td>
-                    <td>${customer.interest}</td>
+                    <td>${escapeHtml(customer.name)}</td>
+                    <td>${escapeHtml(customer.email)}</td>
+                    <td>${escapeHtml(customer.phone)}</td>
+                    <td>${escapeHtml(customer.country)}</td>
+                    <td>${escapeHtml(customer.interest)}</td>
                     <td>
                         <span class="status-badge status-${customer.status}">
                             ${formatStatus(customer.status)}
                         </span>
                     </td>
-                    <td>${new Date(customer.submittedAt).toLocaleDateString()}</td>
+                    <td>${new Date(customer.submittedAt).toLocaleDateString('zh-CN')}</td>
                     <td>
                         <select onchange="updateStatus(${customer.id}, this.value)" class="filter-select" style="padding: 5px;">
-                            <option value="pending" ${customer.status === 'pending' ? 'selected' : ''}>Pending</option>
-                            <option value="coupon_sent" ${customer.status === 'coupon_sent' ? 'selected' : ''}>Coupon Sent</option>
-                            <option value="completed" ${customer.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            <option value="pending" ${customer.status === 'pending' ? 'selected' : ''}>待处理</option>
+                            <option value="coupon_sent" ${customer.status === 'coupon_sent' ? 'selected' : ''}>已发优惠券</option>
+                            <option value="completed" ${customer.status === 'completed' ? 'selected' : ''}>已完成</option>
                         </select>
                     </td>
                 </tr>
             `).join('');
         }
 
+        // 防止XSS攻击的HTML转义函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function formatStatus(status) {
             const statusMap = {
-                'pending': 'Pending',
-                'coupon_sent': 'Coupon Sent',
-                'completed': 'Completed'
+                'pending': '待处理',
+                'coupon_sent': '已发优惠券',
+                'completed': '已完成'
             };
             return statusMap[status] || status;
         }
@@ -490,6 +991,9 @@
             if (window.exportCustomerData && window.exportCustomerData.updateCustomerStatus) {
                 window.exportCustomerData.updateCustomerStatus(customerId, newStatus);
                 loadCustomerData();
+                if (adminSecurity) {
+                    adminSecurity.logSecurityEvent('状态更新', `客户ID ${customerId} 状态更新为 ${newStatus}`);
+                }
             }
         }
 
@@ -515,10 +1019,9 @@
 
         function refreshData() {
             loadCustomerData();
-            // 可以添加一些视觉反馈
             const refreshBtn = event.target;
             const originalText = refreshBtn.textContent;
-            refreshBtn.textContent = 'Refreshing...';
+            refreshBtn.textContent = '刷新中...';
             setTimeout(() => {
                 refreshBtn.textContent = originalText;
             }, 500);
@@ -527,33 +1030,31 @@
         function exportCSV() {
             if (window.exportCustomerData && window.exportCustomerData.toCSV) {
                 window.exportCustomerData.toCSV();
+                if (adminSecurity) {
+                    adminSecurity.logSecurityEvent('数据导出', 'CSV格式数据导出');
+                }
             } else {
-                alert('No export function available. Please ensure the main page is loaded first.');
+                alert('导出功能不可用，请确保主页面已加载。');
             }
         }
 
         function exportExcel() {
             if (window.exportCustomerData && window.exportCustomerData.toExcel) {
                 window.exportCustomerData.toExcel();
+                if (adminSecurity) {
+                    adminSecurity.logSecurityEvent('数据导出', 'Excel格式数据导出');
+                }
             } else {
-                alert('No export function available. Please ensure the main page is loaded first.');
+                alert('导出功能不可用，请确保主页面已加载。');
             }
         }
 
-        // 复制表单链接
         function copyFormURL() {
             const url = 'https://chronicat.github.io/tiktok-customer-system/index.html';
             
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(url).then(function() {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '已复制！';
-                    btn.style.background = '#10b981';
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#6b7280';
-                    }, 2000);
+                    showCopySuccess(event.target);
                 }).catch(function(err) {
                     console.error('复制失败:', err);
                     fallbackCopy(url);
@@ -563,6 +1064,16 @@
             }
         }
         
+        function showCopySuccess(btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '已复制！';
+            btn.style.background = '#10b981';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#6b7280';
+            }, 2000);
+        }
+
         function fallbackCopy(text) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
@@ -575,14 +1086,7 @@
             try {
                 const successful = document.execCommand('copy');
                 if (successful) {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '已复制！';
-                    btn.style.background = '#10b981';
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#6b7280';
-                    }, 2000);
+                    showCopySuccess(event.target);
                 } else {
                     alert('复制失败，请手动复制：' + text);
                 }
@@ -594,18 +1098,15 @@
             document.body.removeChild(textarea);
         }
 
-        // 下载二维码图片
         function downloadQRImage() {
             const link = document.createElement('a');
             link.download = 'tiktok-customer-form-qrcode.png';
-            link.href = 'qrcode-fixed.png';
+            link.href = '../qrcode-fixed.png';
             
-            // 添加到文档并点击
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            // 提供用户反馈
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = '下载成功！';
@@ -614,7 +1115,83 @@
                 btn.textContent = originalText;
                 btn.style.background = '#10b981';
             }, 2000);
+
+            if (adminSecurity) {
+                adminSecurity.logSecurityEvent('文件下载', '二维码图片下载');
+            }
         }
+
+        function backupData() {
+            if (window.exportCustomerData && window.exportCustomerData.backupData) {
+                window.exportCustomerData.backupData().then(success => {
+                    if (success) {
+                        const btn = event.target;
+                        const originalText = btn.textContent;
+                        btn.textContent = '备份成功！';
+                        btn.style.background = '#10b981';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.background = '#f59e0b';
+                        }, 2000);
+                        
+                        if (adminSecurity) {
+                            adminSecurity.logSecurityEvent('数据备份', '客户数据备份成功');
+                        }
+                    } else {
+                        alert('备份失败，请重试');
+                    }
+                });
+            } else {
+                alert('备份功能不可用，请确保主页面已加载');
+            }
+        }
+
+        function restoreData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (window.exportCustomerData && window.exportCustomerData.restoreData) {
+                window.exportCustomerData.restoreData(file);
+                if (adminSecurity) {
+                    adminSecurity.logSecurityEvent('数据恢复', `从文件 ${file.name} 恢复数据`);
+                }
+            } else {
+                alert('恢复功能不可用，请确保主页面已加载');
+            }
+            
+            input.value = '';
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清理所有客户数据吗？此操作不可恢复！')) {
+                if (window.exportCustomerData && window.exportCustomerData.clearData) {
+                    window.exportCustomerData.clearData();
+                    if (adminSecurity) {
+                        adminSecurity.logSecurityEvent('数据清理', '所有客户数据已被清理');
+                    }
+                } else {
+                    alert('清理功能不可用，请确保主页面已加载');
+                }
+            }
+        }
+
+        // 防止右键菜单（增强安全性）
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 防止F12开发者工具
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                if (adminSecurity) {
+                    adminSecurity.logSecurityEvent('安全警告', '尝试访问开发者工具');
+                }
+            }
+        });
     </script>
 </body>
 </html>

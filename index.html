@@ -4,12 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Information Form | TikTok Live</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="manifest" href="../manifest.json">
     <meta name="theme-color" content="#2563eb">
+    <style>
+        /* 防刷机制样式增强 */
+        .rate-limit-warning {
+            background: linear-gradient(135deg, #fef3c7, #fbbf24);
+            color: #92400e;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid #f59e0b;
+            text-align: center;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .rate-limit-error {
+            background: linear-gradient(135deg, #fef2f2, #f87171);
+            color: #dc2626;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 2px solid #ef4444;
+            text-align: center;
+            font-weight: 600;
+            animation: shake 0.5s ease-in-out;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .countdown-display {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #dc2626;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .security-notice {
+            background: linear-gradient(135deg, #eff6ff, #3b82f6);
+            color: #1e40af;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            border-left: 4px solid #2563eb;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
+        }
+        
+        .honeypot-container {
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        .form-timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .submission-progress {
+            background: #f3f4f6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #d1d5db;
+        }
+        
+        .submission-count {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .submission-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .submission-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #ef4444);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .form-disabled {
+            pointer-events: none;
+            opacity: 0.6;
+            position: relative;
+        }
+        
+        .form-disabled::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+            border-radius: 15px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
+        <!-- 表单计时器 -->
+        <div id="form-timer" class="form-timer" style="display: none;">
+            <span id="timer-text">填写时间: <span id="timer-count">0</span>s</span>
+        </div>
+        
         <!-- 语言切换器 -->
         <div class="language-switcher">
             <button id="lang-en" class="lang-btn active" data-lang="en">English</button>
@@ -22,27 +160,62 @@
             <p id="main-subtitle">Please fill in your information to receive exclusive offers</p>
         </header>
 
+        <!-- 安全提示 -->
+        <div id="security-notice" class="security-notice">
+            <strong id="security-title">🔒 Security Notice</strong><br>
+            <span id="security-text">This form is protected against automated submissions. Please fill out carefully.</span>
+        </div>
+        
+        <!-- 提交进度显示 -->
+        <div id="submission-progress" class="submission-progress" style="display: none;">
+            <div class="submission-count">
+                <span id="submission-text">Submissions today:</span>
+                <span id="submission-count-display">0/10</span>
+            </div>
+            <div class="submission-bar">
+                <div id="submission-fill" class="submission-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+
         <!-- 表单容器 -->
         <div class="form-container">
             <form id="customerForm" class="customer-form">
+                <!-- 多个隐藏的蜜罐字段 -->
+                <div class="honeypot-container">
+                    <label for="website">Website URL</label>
+                    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                </div>
+                <div class="honeypot-container">
+                    <label for="company">Company Name</label>
+                    <input type="text" id="company" name="company" tabindex="-1" autocomplete="off">
+                </div>
+                <div class="honeypot-container">
+                    <label for="position">Job Title</label>
+                    <input type="text" id="position" name="position" tabindex="-1" autocomplete="off">
+                </div>
+                <div class="honeypot-container">
+                    <label for="verification">Verification Code</label>
+                    <input type="text" id="verification" name="verification" tabindex="-1" autocomplete="off">
+                </div>
+                
                 <div class="form-group">
                     <label for="name" id="label-name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" required autocomplete="name">
                 </div>
 
                 <div class="form-group">
                     <label for="email" id="label-email">Email Address</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="phone" id="label-phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="tel" id="phone" name="phone" required autocomplete="tel">
                 </div>
 
                 <div class="form-group">
                     <label for="country" id="label-country">Country</label>
-                    <select id="country" name="country" required>
+                    <select id="country" name="country" required autocomplete="country">
                         <option value="" id="option-select-country">Select your country</option>
                         <option value="DZ">Algeria</option>
                         <option value="AO">Angola</option>
@@ -103,7 +276,7 @@
 
                 <div class="form-group">
                     <label for="city" id="label-city">City</label>
-                    <input type="text" id="city" name="city" required>
+                    <input type="text" id="city" name="city" required autocomplete="address-level2">
                 </div>
 
                 <div class="form-group">
@@ -134,8 +307,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script src="script.js"></script>
 </body>
