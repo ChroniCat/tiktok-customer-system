@@ -597,7 +597,7 @@
             // 验证密码（使用预设的安全哈希）
             async verifyPassword(inputPassword) {
                 // 默认密码: "SecureAdmin2024!" 的SHA-256哈希
-                const correctHash = 'f7d5a7e8c9b6d4f3e2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8';
+                const correctHash = '122df711d2ac5dad5107cbe3f40efa3f60f6f6aae02bf821bd305ff441d0c552';
                 const inputHash = await this.hashPassword(inputPassword);
                 return inputHash === correctHash;
             }
